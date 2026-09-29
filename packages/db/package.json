@@ -1,0 +1,41 @@
+{
+  "name": "@srms/db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SRMS database: Drizzle schema, SQL migrations with business-rule triggers, bootstrap and demo seed",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./crypto": "./src/crypto.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "generate:custom": "drizzle-kit generate --custom",
+    "migrate": "tsx src/migrate.ts",
+    "migrate:deploy": "tsx src/migrate.ts",
+    "bootstrap": "tsx src/bootstrap.ts",
+    "seed": "tsx src/seed.ts",
+    "reset": "tsx src/reset.ts && tsx src/migrate.ts && tsx src/bootstrap.ts && tsx src/seed.ts",
+    "studio": "drizzle-kit studio",
+    "check": "drizzle-kit check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@srms/shared": "workspace:*",
+    "drizzle-orm": "^0.45.3",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "@types/pg": "^8.23.1",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
