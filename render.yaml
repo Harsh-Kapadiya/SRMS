@@ -1,0 +1,38 @@
+# Render Blueprint for the SRMS API (Render → New → Blueprint → pick this repo).
+# The database is Neon (not Render Postgres); paste its URLs when prompted.
+services:
+  - type: web
+    name: srms-api
+    runtime: node
+    plan: free
+    region: singapore # closest Render region to India; pick Neon's Singapore region too
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @srms/api build
+    # Migrations + bootstrap are idempotent and run on every start (free plan has no pre-deploy hook).
+    startCommand: node apps/api/dist/migrate.js && node apps/api/dist/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL # Neon pooled connection string (host contains -pooler)
+        sync: false
+      - key: DIRECT_URL # Neon direct connection string (for migrations)
+        sync: false
+      - key: APP_SECRET
+        generateValue: true
+      # Render generates a base64 256-bit value = exactly a valid AES-256 key.
+      # BACK IT UP: if it is lost, stored Aadhaar numbers cannot be decrypted.
+      - key: AADHAAR_ENC_KEY
+        generateValue: true
+      - key: AADHAAR_HASH_PEPPER
+        generateValue: true
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: DEMO_MODE
+        value: "true"
+      - key: SMS_PROVIDER
+        value: log

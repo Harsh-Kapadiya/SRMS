@@ -12,7 +12,7 @@ DFDs (Level 0–2), and UML use-case, class and sequence diagrams.
 | App | Users | Status |
 | --- | --- | --- |
 | `packages/db` | PostgreSQL schema, business-rule triggers, seed | ✅ Step 1 |
-| `apps/api` | One Express API for all roles | ⏳ Step 2 |
+| `apps/api` | One Express API for all roles — [docs/api.md](docs/api.md) | ✅ Step 2 |
 | `apps/beneficiary` | Ration card holders — register, Aadhaar OTP, quota, history, complaints | ⏳ Step 3 |
 | `apps/official` | Govt officials — KPI dashboard, reports, complaint resolution | ⏳ Step 4 |
 | `apps/admin` | System admin — dealers, shops, commodities, users, settings, audit | ⏳ Step 5 |
@@ -35,7 +35,9 @@ pnpm db:up                      # Postgres 16 in Docker (docker-compose.yml)
 cp packages/db/.env.example packages/db/.env
 #   fill AADHAAR_ENC_KEY with:  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 pnpm db:deploy && pnpm db:bootstrap && pnpm db:seed
-pnpm db:test                    # 23 rule tests
+pnpm test                       # 45 tests: DB rules + end-to-end API
+cp apps/api/.env.example apps/api/.env   # same Aadhaar secrets as packages/db/.env
+pnpm --filter @srms/api dev     # API on http://localhost:4000
 ```
 
 Demo logins after `pnpm db:seed`:
@@ -51,10 +53,11 @@ Demo logins after `pnpm db:seed`:
 ## Repository layout
 
 ```
-apps/            web apps + API (added step by step)
+apps/api         Express API (routes per role, SMS worker, reports)
+apps/…           the four web apps (steps 3–6)
 packages/db      schema, migrations, bootstrap, seed, tests
 packages/shared  constants, Aadhaar/mobile validation, month helpers
-docs/            database design and (later) API + deployment guides
+docs/            database design, API reference (deployment guide comes with step 7)
 ```
 
 ## License
