@@ -3,13 +3,10 @@
  *   districts, commodities, entitlement rules, default settings, and the first
  *   System Admin (from BOOTSTRAP_ADMIN_* env vars) if no admin exists yet.
  *
- *   pnpm db:bootstrap
+ *   pnpm db:bootstrap   (src/cli.ts)
  */
-import 'dotenv/config';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { eq, sql } from 'drizzle-orm';
-import { createDb, createPool, type Database } from './client';
+import type { Database } from './client';
 import { hashPassword, passwordProblems } from './password';
 import { commodities, districts, entitlementRules, settings, users } from './schema';
 import { COMMODITIES, DEFAULT_SETTINGS, DISTRICTS, ENTITLEMENTS, STATE_NAME } from './data/reference';
@@ -70,15 +67,4 @@ export async function bootstrap(db: Database, log: (msg: string) => void = conso
     passwordHash: await hashPassword(password),
   });
   log(`✔ created system admin ${email}`);
-}
-
-const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
-if (isMain) {
-  const pool = createPool();
-  bootstrap(createDb(pool))
-    .catch((err) => {
-      console.error('✖ bootstrap failed:', err);
-      process.exitCode = 1;
-    })
-    .finally(() => pool.end());
 }

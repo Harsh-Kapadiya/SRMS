@@ -9,16 +9,18 @@
   "exports": {
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
-    "./crypto": "./src/crypto.ts"
+    "./crypto": "./src/crypto.ts",
+    "./migrate": "./src/migrate.ts",
+    "./bootstrap": "./src/bootstrap.ts"
   },
   "scripts": {
     "generate": "drizzle-kit generate",
     "generate:custom": "drizzle-kit generate --custom",
-    "migrate": "tsx src/migrate.ts",
-    "migrate:deploy": "tsx src/migrate.ts",
-    "bootstrap": "tsx src/bootstrap.ts",
+    "migrate": "tsx src/cli.ts migrate",
+    "migrate:deploy": "tsx src/cli.ts migrate",
+    "bootstrap": "tsx src/cli.ts bootstrap",
     "seed": "tsx src/seed.ts",
-    "reset": "tsx src/reset.ts && tsx src/migrate.ts && tsx src/bootstrap.ts && tsx src/seed.ts",
+    "reset": "tsx src/reset.ts && tsx src/cli.ts migrate && tsx src/cli.ts bootstrap && tsx src/seed.ts",
     "studio": "drizzle-kit studio",
     "check": "drizzle-kit check",
     "typecheck": "tsc --noEmit",

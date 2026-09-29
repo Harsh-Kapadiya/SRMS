@@ -162,7 +162,10 @@ export const users = pgTable(
   ],
 );
 
-/** Refresh-token sessions (rotated on every refresh; reuse revokes the family). */
+/**
+ * Server-side sessions: the cookie holds a random token, only its SHA-256 is
+ * stored. Logout / suspension deletes rows, so revocation is immediate.
+ */
 export const sessions = pgTable(
   'sessions',
   {
@@ -171,15 +174,14 @@ export const sessions = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     tokenHash: char('token_hash', { length: 64 }).notNull().unique(),
-    familyId: uuid('family_id').notNull(),
+    /** Which web app the session belongs to (beneficiary / dealer / official / admin). */
+    app: varchar('app', { length: 12 }).notNull(),
     expiresAt: tstz('expires_at').notNull(),
-    revokedAt: tstz('revoked_at'),
-    replacedById: uuid('replaced_by_id'),
     ip: varchar('ip', { length: 64 }),
     userAgent: varchar('user_agent', { length: 300 }),
     createdAt: createdAt(),
   },
-  (t) => [index('sessions_user_idx').on(t.userId), index('sessions_family_idx').on(t.familyId)],
+  (t) => [index('sessions_user_idx').on(t.userId), index('sessions_expires_idx').on(t.expiresAt)],
 );
 
 /**
