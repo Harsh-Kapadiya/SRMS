@@ -28,19 +28,20 @@ DFDs (Level 0–2), and UML use-case, class and sequence diagrams.
 
 ## Quick start
 
+Needs Node.js 20.18+ (22 recommended) and Docker Desktop (for PostgreSQL).
+
 ```bash
-corepack enable                 # provides pnpm
+corepack enable                 # provides pnpm   (or: npm install -g pnpm)
 pnpm install
-pnpm db:up                      # Postgres 16 in Docker (docker-compose.yml)
+pnpm db:up                      # PostgreSQL 16 in Docker (docker-compose.yml)
 cp packages/db/.env.example packages/db/.env
-#   fill AADHAAR_ENC_KEY with:  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-pnpm db:deploy && pnpm db:bootstrap && pnpm db:seed
+cp apps/api/.env.example apps/api/.env
+#   fill in APP_SECRET, AADHAAR_ENC_KEY, AADHAAR_HASH_PEPPER — the two AADHAAR_* values
+#   must be identical in both files. Generate each with:
+#   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+pnpm db:reset                   # tables, business rules, reference + demo data (re-run any time to start fresh)
+pnpm dev                        # API :4000 · beneficiary :3001 · official :3002 · admin :3003
 pnpm test                       # 45 tests: DB rules + end-to-end API
-cp apps/api/.env.example apps/api/.env   # same Aadhaar secrets as packages/db/.env
-pnpm --filter @srms/api dev     # API on http://localhost:4000
-pnpm --filter @srms/beneficiary dev   # http://localhost:3001 (proxies /api → API_URL, default :4000)
-pnpm --filter @srms/official dev      # http://localhost:3002
-pnpm --filter @srms/admin dev         # http://localhost:3003
 ```
 
 Demo logins after `pnpm db:seed`:
