@@ -161,7 +161,7 @@ export async function listDistributions(where: SQL, limit: number, offset: numbe
   const { rows } = await db.execute<Record<string, unknown>>(sql`
     select d.transaction_id, d.receipt_id, d.issue_date, d.status, d.auth_method, d.captured_offline_at,
            b.name as beneficiary_name, b.ration_card_no, s.shop_code, s.shop_name,
-           coalesce(json_agg(json_build_object('code', c.code, 'name', c.commodity_name, 'unit', c.unit, 'quantity', i.quantity)
+           coalesce(json_agg(json_build_object('code', c.code, 'name', c.commodity_name, 'nameHi', c.commodity_name_hi, 'unit', c.unit, 'quantity', i.quantity)
                     order by c.sort_order), '[]') as items,
            count(*) over () as total
     from distributions d
@@ -186,7 +186,7 @@ export async function listDistributions(where: SQL, limit: number, offset: numbe
       rationCardNo: (r.ration_card_no as string) ?? null,
       shopCode: String(r.shop_code),
       shopName: String(r.shop_name),
-      items: (r.items as { code: string; name: string; unit: string; quantity: string }[]).map((i) => ({ ...i, quantity: num(i.quantity) })),
+      items: (r.items as { code: string; name: string; nameHi: string | null; unit: string; quantity: string }[]).map((i) => ({ ...i, quantity: num(i.quantity) })),
     })),
   };
 }
