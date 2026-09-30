@@ -42,9 +42,10 @@ export function createApi(app: AppName, onUnauthorized?: () => void) {
     } catch {
       throw new ApiError(0, 'NETWORK', 'No internet connection. Please try again.');
     }
-    if (res.status === 401 && onUnauthorized) onUnauthorized();
     if (!res.ok) {
       const err = (await res.json().catch(() => null))?.error as { code?: string; message?: string; issues?: ApiError['issues'] } | undefined;
+      // Only an expired/missing session logs out; a wrong password (BAD_CREDENTIALS) is an ordinary form error.
+      if (err?.code === 'UNAUTHENTICATED') onUnauthorized?.();
       throw new ApiError(res.status, err?.code ?? `HTTP_${res.status}`, err?.message ?? 'Something went wrong. Please try again.', err?.issues);
     }
     const type = res.headers.get('content-type') ?? '';

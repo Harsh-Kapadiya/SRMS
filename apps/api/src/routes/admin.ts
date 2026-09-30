@@ -25,7 +25,8 @@ adminRouter.get('/overview', async (_req, res) => {
     select
       (select count(*) from dealers where status = 'ACTIVE') as dealers,
       (select count(*) from shops where status = 'ACTIVE') as shops,
-      (select count(*) from shops where dealer_id is null or status <> 'ACTIVE') as shops_unassigned,
+      (select count(*) from shops s left join dealers d on d.dealer_id = s.dealer_id
+        where s.status = 'ACTIVE' and (s.dealer_id is null or d.status <> 'ACTIVE')) as shops_unassigned,
       (select count(*) from officials) as officials,
       (select count(*) from beneficiaries where verification_status = 'VERIFIED') as beneficiaries,
       (select count(*) from beneficiaries where verification_status = 'PENDING') as pending,

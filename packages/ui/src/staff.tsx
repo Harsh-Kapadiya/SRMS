@@ -113,6 +113,7 @@ export function StaffShell({ api, appName, nav, subtitle, children }: {
   const me = api.useGet<{ user: StaffUser }>('/auth/me');
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
   useEffect(() => setOpen(false), [path]);
 
   if (!me.data) {
@@ -158,7 +159,10 @@ export function StaffShell({ api, appName, nav, subtitle, children }: {
       <div className="mt-auto rounded-xl border border-line p-3">
         <p className="truncate text-sm font-semibold">{user.fullName}</p>
         <p className="truncate text-xs text-ink-3">{subtitle?.(user) ?? user.email}</p>
-        <Button variant="secondary" size="sm" block className="mt-3" onClick={logout}>Log out</Button>
+        <div className="mt-3 flex gap-2">
+          <Button variant="secondary" size="sm" className="flex-1 whitespace-nowrap" onClick={() => setPwOpen(true)}>Password</Button>
+          <Button variant="secondary" size="sm" className="flex-1 whitespace-nowrap" onClick={logout}>Log out</Button>
+        </div>
       </div>
     </nav>
   );
@@ -178,7 +182,60 @@ export function StaffShell({ api, appName, nav, subtitle, children }: {
         </div>
       )}
       <main className="min-w-0 px-4 py-6 lg:px-8">{children(user)}</main>
+      <ChangePassword api={api} open={pwOpen} onClose={() => setPwOpen(false)} />
     </div>
+  );
+}
+
+/** Staff replace the temporary password the admin handed them; other sessions are logged out by the API. */
+function ChangePassword({ api, open, onClose }: { api: Api; open: boolean; onClose: () => void }) {
+  const [form, setForm] = useState({ current: '', next: '', confirm: '' });
+  const [error, setError] = useState<string>();
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+  const close = () => {
+    setForm({ current: '', next: '', confirm: '' });
+    setError(undefined);
+    setDone(false);
+    onClose();
+  };
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    if (form.next !== form.confirm) return setError('The new passwords do not match.');
+    setBusy(true);
+    setError(undefined);
+    try {
+      await api.post('/auth/change-password', { currentPassword: form.current, newPassword: form.next });
+      setDone(true);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Modal open={open} onClose={close} title="Change password">
+      {done ? (
+        <div className="space-y-4">
+          <Alert tone="ok" title="Password changed">Any other device signed in to this account has been logged out.</Alert>
+          <Button block onClick={close}>Done</Button>
+        </div>
+      ) : (
+        <form onSubmit={submit} className="space-y-4" noValidate>
+          <Field label="Current password">
+            {(id) => <Input id={id} type="password" autoComplete="current-password" value={form.current} onChange={(e) => setForm({ ...form, current: e.target.value })} />}
+          </Field>
+          <Field label="New password" hint="At least 10 characters, with upper- and lower-case letters and a digit.">
+            {(id) => <Input id={id} type="password" autoComplete="new-password" value={form.next} onChange={(e) => setForm({ ...form, next: e.target.value })} />}
+          </Field>
+          <Field label="Repeat new password">
+            {(id) => <Input id={id} type="password" autoComplete="new-password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} />}
+          </Field>
+          {error && <Alert tone="bad" title={error} />}
+          <Button type="submit" block loading={busy}>Change password</Button>
+        </form>
+      )}
+    </Modal>
   );
 }
 

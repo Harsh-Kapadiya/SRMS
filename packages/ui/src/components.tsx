@@ -40,8 +40,9 @@ export function Button({ variant = 'primary', size = 'md', loading, block, class
 
 // ─── Form fields ─────────────────────────────────────────────────────────────
 
+// Full width by default via .srms-control (components layer), so a `w-*` utility at the call site wins.
 const control =
-  'w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-base text-ink placeholder:text-ink-3 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30 disabled:opacity-60 aria-[invalid=true]:border-bad';
+  'srms-control rounded-xl border border-line bg-surface px-3.5 py-2.5 text-base text-ink placeholder:text-ink-3 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30 disabled:opacity-60 aria-[invalid=true]:border-bad';
 
 /** Label + control + hint/error, wired for screen readers. */
 export function Field({ label, hint, error, children, className }: { label: ReactNode; hint?: ReactNode; error?: string; children: (id: string, describedBy?: string) => ReactNode; className?: string }) {

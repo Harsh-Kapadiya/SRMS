@@ -122,6 +122,12 @@
 
 /* Data tables (staff apps): hairline rows, tabular numbers, sticky header. */
 @layer components {
+  .srms-control {
+    width: 100%;
+  }
+}
+
+@layer components {
   .data-table {
     width: 100%;
     border-collapse: collapse;
