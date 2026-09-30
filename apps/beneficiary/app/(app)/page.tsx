@@ -109,7 +109,7 @@ export default function HomePage() {
       </Card>
 
       {verified && (
-        <Card className="p-0">
+        <Card flush>
           <div className="flex items-center justify-between px-5 pt-5">
             <h2 className="text-lg font-bold">{t('home.recent')}</h2>
             <Link href="/history" className="text-sm font-semibold text-brand">{t('common.viewAll')}</Link>

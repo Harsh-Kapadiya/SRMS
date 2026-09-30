@@ -100,8 +100,9 @@ export const OtpInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 
 // ─── Display ─────────────────────────────────────────────────────────────────
 
-export function Card({ className, children, as: Tag = 'section' }: { className?: string; children: ReactNode; as?: 'section' | 'div' | 'article' }) {
-  return <Tag className={cx('rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(16,32,23,0.04)]', className)}>{children}</Tag>;
+/** `flush` drops the padding (for edge-to-edge tables); min-w-0 lets a card shrink inside grids so wide tables scroll instead of widening the page. */
+export function Card({ className, children, flush, as: Tag = 'section' }: { className?: string; children: ReactNode; flush?: boolean; as?: 'section' | 'div' | 'article' }) {
+  return <Tag className={cx('min-w-0 rounded-[var(--radius-card)] border border-line bg-surface shadow-[0_1px_2px_rgba(16,32,23,0.04)]', flush ? 'overflow-hidden' : 'p-5', className)}>{children}</Tag>;
 }
 
 export type Tone = 'neutral' | 'brand' | 'ok' | 'warn' | 'bad' | 'info' | 'accent';
@@ -116,7 +117,7 @@ const TONES: Record<Tone, string> = {
 };
 
 export function Badge({ tone = 'neutral', children, className }: { tone?: Tone; children: ReactNode; className?: string }) {
-  return <span className={cx('inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold', TONES[tone], className)}>{children}</span>;
+  return <span className={cx('inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold', TONES[tone], className)}>{children}</span>;
 }
 
 export function Alert({ tone = 'info', title, children, action, className }: { tone?: Tone; title?: ReactNode; children?: ReactNode; action?: ReactNode; className?: string }) {

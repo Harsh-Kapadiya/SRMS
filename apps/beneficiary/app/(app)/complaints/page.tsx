@@ -22,7 +22,7 @@ export default function ComplaintsPage() {
           <div className="flex justify-center pb-4">{newButton}</div>
         </Card>
       ) : (
-        <Card className="p-0">
+        <Card flush>
           <ul className="divide-y divide-line">
             {res.data.map((c) => (
               <li key={c.id}>

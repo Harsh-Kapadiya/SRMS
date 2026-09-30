@@ -31,7 +31,7 @@ export default function NotificationsPage() {
       {!res.data.items.length ? (
         <Card><Empty icon={<Bell className="size-10" />} title={t('notifications.empty')}>{t('notifications.emptyBody')}</Empty></Card>
       ) : (
-        <Card className="p-0">
+        <Card flush>
           <ul className="divide-y divide-line">
             {res.data.items.map((n) => {
               const Icon = ICON[n.event] ?? Bell;

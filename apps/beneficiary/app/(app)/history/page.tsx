@@ -36,7 +36,7 @@ export default function HistoryPage() {
           {[...groups].map(([month, items]) => (
             <section key={month}>
               <h2 className="mb-2 px-1 text-sm font-bold uppercase tracking-wide text-ink-3">{fmtMonth(`${month}-01`, lang)}</h2>
-              <Card className="p-0">
+              <Card flush>
                 <ul className="divide-y divide-line">
                   {items.map((d) => (
                     <li key={d.id}>

@@ -14,7 +14,7 @@ DFDs (Level 0–2), and UML use-case, class and sequence diagrams.
 | `packages/db` | PostgreSQL schema, business-rule triggers, seed | ✅ Step 1 |
 | `apps/api` | One Express API for all roles — [docs/api.md](docs/api.md) | ✅ Step 2 |
 | `apps/beneficiary` | Ration card holders — register, Aadhaar OTP, quota, history, complaints (EN/हिंदी, installable) | ✅ Step 3 |
-| `apps/official` | Govt officials — KPI dashboard, reports, complaint resolution | ⏳ Step 4 |
+| `apps/official` | Govt officials — KPI dashboard, complaints, shop stock & inspections, receipts & voids, beneficiary review, monthly reports (Excel / PDF) | ✅ Step 4 |
 | `apps/admin` | System admin — dealers, shops, commodities, users, settings, audit | ⏳ Step 5 |
 | `apps/dealer` | Ration dealers — issue ration, stock, low-stock alerts, offline mode | ⏳ Step 6 |
 
@@ -39,6 +39,7 @@ pnpm test                       # 45 tests: DB rules + end-to-end API
 cp apps/api/.env.example apps/api/.env   # same Aadhaar secrets as packages/db/.env
 pnpm --filter @srms/api dev     # API on http://localhost:4000
 pnpm --filter @srms/beneficiary dev   # http://localhost:3001 (proxies /api → API_URL, default :4000)
+pnpm --filter @srms/official dev      # http://localhost:3002
 ```
 
 Demo logins after `pnpm db:seed`:
@@ -56,7 +57,8 @@ Demo logins after `pnpm db:seed`:
 ```
 apps/api         Express API (routes per role, SMS worker, reports)
 apps/beneficiary Next.js app for ration card holders
-apps/…           official, admin, dealer apps (steps 4–6)
+apps/official    Next.js app for government officials (state and district scope)
+apps/…           admin and dealer apps (steps 5–6)
 packages/ui      shared theme, components, API client, i18n for the web apps
 packages/db      schema, migrations, bootstrap, seed, tests
 packages/shared  constants, Aadhaar/mobile validation, month helpers

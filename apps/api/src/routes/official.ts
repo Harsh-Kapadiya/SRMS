@@ -73,7 +73,7 @@ officialRouter.get('/shops/:id', async (req, res) => {
   const { rows } = await db.execute<Record<string, unknown>>(sql`
     select m.id, m.type, m.reason, m.quantity, m.balance_after, m.reference_no, m.note, m.occurred_at, c.commodity_name, c.unit, u.full_name as by
     from stock_movements m join commodities c using (commodity_id) left join users u on u.id = m.created_by_id
-    where m.shop_id = ${shop.id} and m.type <> 'ISSUE' order by m.id desc limit 100`);
+    where m.shop_id = ${shop.id} and m.type <> 'ISSUE' order by m.occurred_at desc, m.id desc limit 100`);
   res.json({
     shop,
     stock: await shopStock(shop.id),

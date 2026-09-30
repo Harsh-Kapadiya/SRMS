@@ -107,5 +107,56 @@
     .no-print {
       display: none !important;
     }
+    .overflow-x-auto {
+      overflow: visible;
+    }
+    .data-table {
+      font-size: 9pt;
+    }
+    .data-table th,
+    .data-table td {
+      padding: 3px 6px;
+    }
+  }
+}
+
+/* Data tables (staff apps): hairline rows, tabular numbers, sticky header. */
+@layer components {
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .data-table th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-2);
+    color: var(--ink-3);
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .data-table td {
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .data-table tbody tr:hover {
+    background: var(--surface-2);
+  }
+  /* line the first/last columns up with the card's 20px gutter; keep names readable on phones */
+  .data-table :is(th, td):first-child {
+    padding-left: 1.25rem;
+    min-width: 10rem;
+  }
+  .data-table :is(th, td):last-child {
+    padding-right: 1.25rem;
+  }
+  .data-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 }
