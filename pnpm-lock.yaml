@@ -18,57 +18,14 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
 
-  apps/admin:
+  backend/api:
     dependencies:
+      '@srms/database':
+        specifier: workspace:*
+        version: link:../database
       '@srms/shared':
         specifier: workspace:*
-        version: link:../../packages/shared
-      '@srms/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      lucide-react:
-        specifier: ^1.49.0
-        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
-      next:
-        specifier: ^16.3.7
-        version: 16.3.7(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      react:
-        specifier: ^19.3.0
-        version: 19.3.0
-      react-dom:
-        specifier: ^19.3.0
-        version: 19.3.0(react@19.3.0)
-      zod:
-        specifier: ^4.6.5
-        version: 4.6.5
-    devDependencies:
-      '@tailwindcss/postcss':
-        specifier: ^4.3.3
-        version: 4.3.3
-      '@types/node':
-        specifier: ^22.20.4
-        version: 22.20.4
-      '@types/react':
-        specifier: ^19.3.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.3.0
-        version: 19.3.0(@types/react@19.3.0)
-      tailwindcss:
-        specifier: ^4.3.3
-        version: 4.3.3
-      typescript:
-        specifier: ~5.9.3
-        version: 5.9.3
-
-  apps/api:
-    dependencies:
-      '@srms/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@srms/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../../shared
       cors:
         specifier: ^2.8.6
         version: 2.8.6
@@ -122,14 +79,91 @@ importers:
         specifier: ^3.2.4
         version: 3.2.7(@types/node@22.20.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)
 
-  apps/beneficiary:
+  backend/database:
     dependencies:
       '@srms/shared':
         specifier: workspace:*
-        version: link:../../packages/shared
-      '@srms/ui':
+        version: link:../../shared
+      drizzle-orm:
+        specifier: ^0.45.3
+        version: 0.45.3(@types/pg@8.23.1)(pg@8.23.0)
+      pg:
+        specifier: ^8.23.0
+        version: 8.23.0
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.4
+        version: 22.20.4
+      '@types/pg':
+        specifier: ^8.23.1
+        version: 8.23.1
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.4.2
+      drizzle-kit:
+        specifier: ^0.31.11
+        version: 0.31.11
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@22.20.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)
+
+  frontend/admin:
+    dependencies:
+      '@srms/shared':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../../shared
+      '@srms/ui-kit':
+        specifier: workspace:*
+        version: link:../ui-kit
+      lucide-react:
+        specifier: ^1.49.0
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      next:
+        specifier: ^16.3.7
+        version: 16.3.7(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: ^19.3.0
+        version: 19.3.0
+      react-dom:
+        specifier: ^19.3.0
+        version: 19.3.0(react@19.3.0)
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.3.3
+        version: 4.3.3
+      '@types/node':
+        specifier: ^22.20.4
+        version: 22.20.4
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+
+  frontend/beneficiary:
+    dependencies:
+      '@srms/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      '@srms/ui-kit':
+        specifier: workspace:*
+        version: link:../ui-kit
       lucide-react:
         specifier: ^1.49.0
         version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
@@ -168,14 +202,14 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
 
-  apps/official:
+  frontend/official:
     dependencies:
       '@srms/shared':
         specifier: workspace:*
-        version: link:../../packages/shared
-      '@srms/ui':
+        version: link:../../shared
+      '@srms/ui-kit':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../ui-kit
       lucide-react:
         specifier: ^1.49.0
         version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
@@ -211,58 +245,11 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
 
-  packages/db:
+  frontend/ui-kit:
     dependencies:
       '@srms/shared':
         specifier: workspace:*
-        version: link:../shared
-      drizzle-orm:
-        specifier: ^0.45.3
-        version: 0.45.3(@types/pg@8.23.1)(pg@8.23.0)
-      pg:
-        specifier: ^8.23.0
-        version: 8.23.0
-    devDependencies:
-      '@types/node':
-        specifier: ^22.20.4
-        version: 22.20.4
-      '@types/pg':
-        specifier: ^8.23.1
-        version: 8.23.1
-      dotenv:
-        specifier: ^17.2.3
-        version: 17.4.2
-      drizzle-kit:
-        specifier: ^0.31.11
-        version: 0.31.11
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
-      typescript:
-        specifier: ~5.9.3
-        version: 5.9.3
-      vitest:
-        specifier: ^3.2.4
-        version: 3.2.7(@types/node@22.20.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)
-
-  packages/shared:
-    dependencies:
-      zod:
-        specifier: ^4.6.5
-        version: 4.6.5
-    devDependencies:
-      typescript:
-        specifier: ~5.9.3
-        version: 5.9.3
-      vitest:
-        specifier: ^3.2.4
-        version: 3.2.7(@types/node@22.20.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)
-
-  packages/ui:
-    dependencies:
-      '@srms/shared':
-        specifier: workspace:*
-        version: link:../shared
+        version: link:../../shared
     devDependencies:
       '@types/react':
         specifier: ^19.3.0
@@ -279,6 +266,19 @@ importers:
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
+
+  shared:
+    dependencies:
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
+    devDependencies:
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@22.20.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)
 
 packages:
 

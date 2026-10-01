@@ -8,7 +8,7 @@ services:
     region: singapore # closest Render region to India; pick Neon's Singapore region too
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @srms/api build
     # Migrations + bootstrap are idempotent and run on every start (free plan has no pre-deploy hook).
-    startCommand: node apps/api/dist/migrate.js && node apps/api/dist/server.js
+    startCommand: node backend/api/dist/run-migrations.js && node backend/api/dist/server.js
     healthCheckPath: /health
     autoDeploy: true
     envVars:
