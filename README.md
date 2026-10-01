@@ -11,12 +11,12 @@ DFDs (Level 0–2), and UML use-case, class and sequence diagrams.
 
 | App | Users | Status |
 | --- | --- | --- |
-| `packages/db` | PostgreSQL schema, business-rule triggers, seed | ✅ Step 1 |
-| `apps/api` | One Express API for all roles — [docs/api.md](docs/api.md) | ✅ Step 2 |
-| `apps/beneficiary` | Ration card holders — register, Aadhaar OTP, quota, history, complaints (EN/हिंदी, installable) | ✅ Step 3 |
-| `apps/official` | Govt officials — KPI dashboard, complaints, shop stock & inspections, receipts & voids, beneficiary review, monthly reports (Excel / PDF) | ✅ Step 4 |
-| `apps/admin` | System admin — onboard dealers & officials, shops & monthly allocation (max 3 per dealer), users, commodities & entitlements, settings, audit & SMS logs | ✅ Step 5 |
-| `apps/dealer` | Ration dealers — issue ration, stock, low-stock alerts, offline mode | ⏳ Step 6 |
+| `backend/database` | PostgreSQL schema, business-rule triggers, seed | ✅ Step 1 |
+| `backend/api` | One Express API for all roles — [docs/api.md](docs/api.md) | ✅ Step 2 |
+| `frontend/beneficiary` | Ration card holders — register, Aadhaar OTP, quota, history, complaints (EN/हिंदी, installable) | ✅ Step 3 |
+| `frontend/official` | Govt officials — KPI dashboard, complaints, shop stock & inspections, receipts & voids, beneficiary review, monthly reports (Excel / PDF) | ✅ Step 4 |
+| `frontend/admin` | System admin — onboard dealers & officials, shops & monthly allocation (max 3 per dealer), users, commodities & entitlements, settings, audit & SMS logs | ✅ Step 5 |
+| `frontend/dealer` | Ration dealers — issue ration, stock, low-stock alerts, offline mode | ⏳ Step 6 |
 
 ## Stack
 
@@ -28,19 +28,20 @@ DFDs (Level 0–2), and UML use-case, class and sequence diagrams.
 
 ## Quick start
 
+Needs Node.js 20.18+ (22 recommended) and Docker Desktop (for PostgreSQL).
+
 ```bash
-corepack enable                 # provides pnpm
+corepack enable                 # provides pnpm   (or: npm install -g pnpm)
 pnpm install
-pnpm db:up                      # Postgres 16 in Docker (docker-compose.yml)
-cp packages/db/.env.example packages/db/.env
-#   fill AADHAAR_ENC_KEY with:  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-pnpm db:deploy && pnpm db:bootstrap && pnpm db:seed
+pnpm db:up                      # PostgreSQL 16 in Docker (docker-compose.yml)
+cp backend/database/.env.example backend/database/.env
+cp backend/api/.env.example backend/api/.env
+#   fill in APP_SECRET, AADHAAR_ENC_KEY, AADHAAR_HASH_PEPPER — the two AADHAAR_* values
+#   must be identical in both files. Generate each with:
+#   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+pnpm db:reset                   # tables, business rules, reference + demo data (re-run any time to start fresh)
+pnpm dev                        # API :4000 · beneficiary :3001 · official :3002 · admin :3003
 pnpm test                       # 45 tests: DB rules + end-to-end API
-cp apps/api/.env.example apps/api/.env   # same Aadhaar secrets as packages/db/.env
-pnpm --filter @srms/api dev     # API on http://localhost:4000
-pnpm --filter @srms/beneficiary dev   # http://localhost:3001 (proxies /api → API_URL, default :4000)
-pnpm --filter @srms/official dev      # http://localhost:3002
-pnpm --filter @srms/admin dev         # http://localhost:3003
 ```
 
 Demo logins after `pnpm db:seed`:
@@ -53,19 +54,35 @@ Demo logins after `pnpm db:seed`:
 | Dealer (3 Patna shops) | dealer@srms.demo | Dealer@12345 |
 | Beneficiary | mobile 9876543210 | OTP shown on screen in demo mode |
 
-## Repository layout
+## Folder layout
 
 ```
-apps/api         Express API (routes per role, SMS worker, reports)
-apps/beneficiary Next.js app for ration card holders
-apps/official    Next.js app for government officials (state and district scope)
-apps/admin       Next.js app for the system administrator
-apps/…           dealer app (step 6)
-packages/ui      shared theme, components, API client, i18n for the web apps
-packages/db      schema, migrations, bootstrap, seed, tests
-packages/shared  constants, Aadhaar/mobile validation, month helpers
-docs/            database design, API reference (deployment guide comes with step 7)
+backend/
+  api/          Express API — src/routes/<role>.ts holds every endpoint of one app
+  database/     schema, SQL migrations (business rules), bootstrap, demo seed, tests
+frontend/
+  beneficiary/  Next.js app for ration card holders           → localhost:3001
+  official/     Next.js app for government officials          → localhost:3002
+  admin/        Next.js app for the system administrator      → localhost:3003
+  dealer/       Next.js app for ration dealers (step 6)       → localhost:3004
+  ui-kit/       theme, buttons, forms, login/sidebar shell and API client used by all apps
+shared/         validation rules and constants used by the API and the apps
+docs/           database design, API reference
 ```
+
+Inside each web app:
+
+```
+app/login/            the sign-in page
+app/(signed-in)/      every page behind sign-in; the folder path is the URL
+                      e.g. app/(signed-in)/complaints/[id]/page.tsx  →  /complaints/123
+lib/<app>-api.ts      the API client, signed-in user and helpers for this app
+lib/<app>-types.ts    shapes of the API responses this app uses
+components/           pieces used only by this app
+```
+
+`page.tsx` and `layout.tsx` are names Next.js requires, so many files share them.
+`.vscode/settings.json` makes VS Code tabs show `admin · complaints/[id]` instead of `page.tsx`.
 
 ## License
 

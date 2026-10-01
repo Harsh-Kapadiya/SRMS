@@ -1,6 +1,6 @@
 # SRMS API
 
-One Express 5 API serves all four web apps. Source: `apps/api/src`.
+One Express 5 API serves all four web apps. Source: `backend/api/src`.
 
 ## How the apps talk to it
 
@@ -91,8 +91,8 @@ Runs inside the API process (`WORKER_ENABLED=true`):
 ## Running
 
 ```bash
-cp apps/api/.env.example apps/api/.env      # fill in the secrets
+cp backend/api/.env.example backend/api/.env      # fill in the secrets
 pnpm --filter @srms/api dev                  # http://localhost:4000
 pnpm --filter @srms/api test                 # 20 end-to-end tests (TEST_DATABASE_URL)
-pnpm --filter @srms/api build && node apps/api/dist/migrate.js && node apps/api/dist/server.js   # production
+pnpm --filter @srms/api build && node backend/api/dist/run-migrations.js && node backend/api/dist/server.js   # production
 ```

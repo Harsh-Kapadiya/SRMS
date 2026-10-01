@@ -8,11 +8,11 @@ districts, entitlement rules, an immutable stock ledger, complaint history and a
 
 | Where | What |
 | --- | --- |
-| `packages/db/src/schema.ts` | Tables, enums, indexes, CHECK constraints (TypeScript, generates `0000_init.sql`) |
-| `packages/db/migrations/0001_business_rules.sql` | Triggers, functions and views that enforce the SRS rules |
-| `packages/db/src/bootstrap.ts` | Production reference data + first System Admin (idempotent) |
-| `packages/db/src/seed.ts` | Demo data for Bihar (never runs in production unless `SEED_DEMO=true`) |
-| `packages/db/test/*.test.ts` | 23 tests proving every rule below |
+| `backend/database/src/schema.ts` | Tables, enums, indexes, CHECK constraints (TypeScript, generates `0000_init.sql`) |
+| `backend/database/migrations/0001_business_rules.sql` | Triggers, functions and views that enforce the SRS rules |
+| `backend/database/src/bootstrap.ts` | Production reference data + first System Admin (idempotent) |
+| `backend/database/src/seed.ts` | Demo data for Bihar (never runs in production unless `SEED_DEMO=true`) |
+| `backend/database/test/*.test.ts` | 23 tests proving every rule below |
 
 ## Entity–relationship diagram
 
@@ -152,15 +152,15 @@ bugs, offline sync and direct SQL all go through the same rules. Errors come bac
 ```bash
 pnpm install
 pnpm db:up                 # local Postgres in Docker (or use your own)
-cp packages/db/.env.example packages/db/.env   # then fill in the two Aadhaar secrets
+cp backend/database/.env.example backend/database/.env   # then fill in the two Aadhaar secrets
 pnpm db:deploy             # apply migrations
 pnpm db:bootstrap          # districts, commodities, entitlements, settings, first admin
 pnpm db:seed               # optional demo data
 pnpm db:test               # rule tests (uses TEST_DATABASE_URL, default …/srms_test)
 ```
 
-Changing the schema: edit `src/schema.ts` → `pnpm --filter @srms/db generate` → review the new SQL
-in `migrations/` → commit. For triggers/functions use `pnpm --filter @srms/db generate:custom`.
+Changing the schema: edit `src/schema.ts` → `pnpm --filter @srms/database generate` → review the new SQL
+in `migrations/` → commit. For triggers/functions use `pnpm --filter @srms/database generate:custom`.
 
 ### Production notes
 
