@@ -6,9 +6,11 @@ const locale = (lang: Lang) => (lang === 'hi' ? 'hi-IN' : 'en-IN');
 export const fmtNum = (n: number, lang: Lang = 'en', maxFrac = 3) =>
   new Intl.NumberFormat(locale(lang), { maximumFractionDigits: maxFrac }).format(n);
 
+/** KG → kg, LITRE → l, PACKET → pkt */
+export const unitLabel = (unit: string) => ({ KG: 'kg', LITRE: 'l', PACKET: 'pkt' } as Record<string, string>)[unit] ?? unit.toLowerCase();
+
 /** 12 kg · 1.5 l · 2 pkt */
-export const fmtQty = (n: number, unit: string, lang: Lang = 'en') =>
-  `${fmtNum(n, lang)} ${({ KG: 'kg', LITRE: 'l', PACKET: 'pkt' } as Record<string, string>)[unit] ?? unit.toLowerCase()}`;
+export const fmtQty = (n: number, unit: string, lang: Lang = 'en') => `${fmtNum(n, lang)} ${unitLabel(unit)}`;
 
 export const fmtMoney = (n: number, lang: Lang = 'en') =>
   new Intl.NumberFormat(locale(lang), { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(n);

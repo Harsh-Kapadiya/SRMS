@@ -16,7 +16,7 @@ DFDs (Level 0–2), and UML use-case, class and sequence diagrams.
 | `frontend/beneficiary` | Ration card holders — register, Aadhaar OTP, quota, history, complaints (EN/हिंदी, installable) | ✅ Step 3 |
 | `frontend/official` | Govt officials — KPI dashboard, complaints, shop stock & inspections, receipts & voids, beneficiary review, monthly reports (Excel / PDF) | ✅ Step 4 |
 | `frontend/admin` | System admin — onboard dealers & officials, shops & monthly allocation (max 3 per dealer), users, commodities & entitlements, settings, audit & SMS logs | ✅ Step 5 |
-| `frontend/dealer` | Ration dealers — issue ration, stock, low-stock alerts, offline mode | ⏳ Step 6 |
+| `frontend/dealer` | Ration dealers — issue ration with Aadhaar OTP, QR card scan, receipts, stock & godown deliveries, low-stock alerts, works offline (EN/हिंदी, installable) | ✅ Step 6 |
 
 ## Stack
 
@@ -40,7 +40,7 @@ cp backend/api/.env.example backend/api/.env
 #   must be identical in both files. Generate each with:
 #   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 pnpm db:reset                   # tables, business rules, reference + demo data (re-run any time to start fresh)
-pnpm dev                        # API :4000 · beneficiary :3001 · official :3002 · admin :3003
+pnpm dev                        # API :4000 · beneficiary :3001 · official :3002 · admin :3003 · dealer :3004
 pnpm test                       # 45 tests: DB rules + end-to-end API
 ```
 
@@ -64,7 +64,7 @@ frontend/
   beneficiary/  Next.js app for ration card holders           → localhost:3001
   official/     Next.js app for government officials          → localhost:3002
   admin/        Next.js app for the system administrator      → localhost:3003
-  dealer/       Next.js app for ration dealers (step 6)       → localhost:3004
+  dealer/       Next.js app for ration dealers (works offline) → localhost:3004
   ui-kit/       theme, buttons, forms, login/sidebar shell and API client used by all apps
 shared/         validation rules and constants used by the API and the apps
 docs/           database design, API reference
@@ -80,6 +80,18 @@ lib/<app>-api.ts      the API client, signed-in user and helpers for this app
 lib/<app>-types.ts    shapes of the API responses this app uses
 components/           pieces used only by this app
 ```
+
+### Dealer app offline mode (NFR-2)
+
+The dealer app saves its shops, stock and each shop's card-holder list (with this month's
+remaining quota) on the phone. Without internet the dealer can still issue ration to the
+shop's own card holders and record godown deliveries; entries wait in a queue
+(`frontend/dealer/lib/offline-store.ts`) and are sent automatically when the connection
+returns. The server re-checks quota and stock, so an entry that would double-issue is refused
+and shown to the dealer. Offline receipts are marked as offline for officials; one synced after
+the admin's *offline review window* is flagged "synced late". A service worker
+(`frontend/dealer/public/dealer-sw.js`) keeps the app itself loadable offline — in production
+builds only (`pnpm build`, then `pnpm --filter @srms/dealer start`), not in `pnpm dev`.
 
 `page.tsx` and `layout.tsx` are names Next.js requires, so many files share them.
 `.vscode/settings.json` makes VS Code tabs show `admin · complaints/[id]` instead of `page.tsx`.

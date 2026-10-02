@@ -160,6 +160,8 @@ export async function receipt(id: string) {
 export async function listDistributions(where: SQL, limit: number, offset: number) {
   const { rows } = await db.execute<Record<string, unknown>>(sql`
     select d.transaction_id, d.receipt_id, d.issue_date, d.status, d.auth_method, d.captured_offline_at,
+           exists (select 1 from audit_logs a where a.entity = 'distributions' and a.entity_id = d.transaction_id::text
+                   and a.action = 'LATE_OFFLINE_SYNC') as synced_late,
            b.name as beneficiary_name, b.ration_card_no, s.shop_code, s.shop_name,
            coalesce(json_agg(json_build_object('code', c.code, 'name', c.commodity_name, 'nameHi', c.commodity_name_hi, 'unit', c.unit, 'quantity', i.quantity)
                     order by c.sort_order), '[]') as items,
@@ -182,6 +184,7 @@ export async function listDistributions(where: SQL, limit: number, offset: numbe
       status: String(r.status),
       authMethod: String(r.auth_method),
       offline: r.captured_offline_at !== null,
+      syncedLate: r.synced_late === true,
       beneficiaryName: String(r.beneficiary_name),
       rationCardNo: (r.ration_card_no as string) ?? null,
       shopCode: String(r.shop_code),

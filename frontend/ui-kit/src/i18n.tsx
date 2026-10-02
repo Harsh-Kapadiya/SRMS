@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Languages } from 'lucide-react';
 
 export type Lang = 'en' | 'hi';
 
@@ -60,4 +61,20 @@ export function createI18n<K extends string>(en: Record<K, string>, hi: Record<K
   }
 
   return { I18nProvider, useI18n };
+}
+
+/** Switches English ⇄ Hindi. Labels are written in both scripts so either reader finds it. */
+export function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
+      title="भाषा बदलें / Change language"
+      aria-label="भाषा बदलें / Change language"
+      className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold text-ink-2 hover:bg-surface-3"
+    >
+      <Languages className="size-4" aria-hidden />
+      {lang === 'en' ? 'हिंदी' : 'English'}
+    </button>
+  );
 }

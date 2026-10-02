@@ -200,10 +200,18 @@ describe('ration distribution (FR-3, NFR-2)', () => {
   });
 
   it('syncs offline transactions idempotently and flags conflicts', async () => {
-    const tx = { shopId, beneficiaryId, items: [{ commodityId: WHEAT, quantity: 3 }], clientRef: crypto.randomUUID(), capturedOfflineAt: new Date(Date.now() - 3_600_000).toISOString() };
+    // Window of 1 hour, transaction captured 2 hours ago → recorded but flagged as a late sync.
+    await admin.patch('/admin/settings', { offline_max_hours: 1 });
+    const tx = { shopId, beneficiaryId, items: [{ commodityId: WHEAT, quantity: 3 }], clientRef: crypto.randomUUID(), capturedOfflineAt: new Date(Date.now() - 2 * 3_600_000).toISOString() };
     const first = await dealer.post('/dealer/distributions', tx);
+    await admin.patch('/admin/settings', { offline_max_hours: 72 });
     expect(first.status).toBe(201);
     expect(first.body.authMethod).toBe('OFFLINE');
+    expect(first.body.syncedLate).toBe(true);
+    const listed = (await dealer.get(`/dealer/distributions?shopId=${shopId}`)).body.items.find((d: { id: string }) => d.id === first.body.id);
+    expect(listed.syncedLate).toBe(true); // fixed at sync time — changing the setting later doesn't clear it
+    const late = (await admin.get('/admin/audit-logs?action=LATE_OFFLINE_SYNC')).body.items;
+    expect(late.map((a: { entityId: string }) => a.entityId)).toContain(first.body.id);
     const replay = await dealer.post('/dealer/distributions', tx);
     expect(replay.status).toBe(200);
     expect(replay.body.id).toBe(first.body.id);

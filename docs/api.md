@@ -46,9 +46,9 @@ One Express 5 API serves all four web apps. Source: `backend/api/src`.
 | GET | `/dealer/shops` | My shops (≤ 3) with stock and today's / month's numbers |
 | GET | `/dealer/shops/:id/stock` | Stock + last 50 ledger entries |
 | GET | `/dealer/shops/:id/roster` | Home beneficiaries + remaining quota (cached for offline use) |
-| GET | `/dealer/lookup?shopId=&q=` | Search by ration card no. / registration no. / mobile → eligibility, quota, stock, max issuable |
+| GET | `/dealer/lookup?shopId=&q=` | Search by ration card no. / registration no. / mobile → eligibility (`reasonCode` when not eligible), quota, stock, max issuable |
 | POST | `/dealer/auth-otp` | Send the beneficiary a point-of-sale OTP (R2) |
-| POST | `/dealer/distributions` | FR-3 issue ration (`otp`), or an offline sync (`clientRef` + `capturedOfflineAt`, idempotent) |
+| POST | `/dealer/distributions` | FR-3 issue ration (`otp`), or an offline sync (`clientRef` + `capturedOfflineAt`, idempotent). `syncedLate: true` when synced after `offline_max_hours` (audit `LATE_OFFLINE_SYNC`) |
 | GET | `/dealer/distributions` · `/dealer/distributions/:id` | Transactions and receipts |
 | POST | `/dealer/stock/receipts` | FR-4 goods received from godown |
 | POST | `/dealer/shops/:id/notify-ready` | R7 "ration has arrived" SMS to beneficiaries who haven't collected yet |

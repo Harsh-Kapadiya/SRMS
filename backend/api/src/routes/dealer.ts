@@ -4,7 +4,7 @@ import { beneficiaries, shops, stockMovements, withActor } from '@srms/database'
 import { distributionCreateSchema, istMonthKey, maskAadhaar, pageSchema, stockReceiptSchema } from '@srms/shared';
 import { z } from 'zod';
 import { db, iso, num } from '../db';
-import { HttpError, actor, forbidden, me, notFound, pageOf, parse, requireRole } from '../http';
+import { HttpError, actor, audit, forbidden, me, notFound, pageOf, parse, requireRole } from '../http';
 import { checkOtp, sendOtp } from '../otp';
 import { entitlement, issueRation, listDistributions, receipt, shopStock } from '../ration';
 
@@ -117,6 +117,8 @@ dealerRouter.get('/lookup', async (req, res) => {
     },
     eligible,
     reason: eligible ? null : b.verificationStatus !== 'VERIFIED' ? `Aadhaar verification is ${b.verificationStatus.toLowerCase()}` : `Account is ${b.status.toLowerCase()}`,
+    // For the app to translate: VERIFICATION_PENDING | VERIFICATION_REJECTED | ACCOUNT_SUSPENDED | ACCOUNT_INACTIVE
+    reasonCode: eligible ? null : b.verificationStatus !== 'VERIFIED' ? `VERIFICATION_${b.verificationStatus}` : `ACCOUNT_${b.status}`,
     requireOtp: await requirePosOtp(),
     lines: lines.map((l) => {
       const inStock = stock.find((s) => s.commodityId === l.commodityId)?.quantityAvailable ?? 0;
@@ -163,12 +165,20 @@ dealerRouter.post('/distributions', async (req, res) => {
     issuedAt: capturedAt,
     capturedOfflineAt: capturedAt,
   });
+  // NFR-2: an offline receipt synced after offline_max_hours is still recorded (the ration was
+  // handed over) but flagged: audit entry here, `syncedLate` in every distribution list.
+  let syncedLate = false;
+  if (capturedAt && !result.duplicate) {
+    const { rows } = await db.execute<{ h: string }>(sql`select srms_setting_num('offline_max_hours', 72) as h`);
+    syncedLate = Date.now() - capturedAt.getTime() > num(rows[0]!.h) * 3_600_000;
+    if (syncedLate) await audit(req, 'LATE_OFFLINE_SYNC', 'distributions', result.id, { receiptNo: result.receiptNo, capturedOfflineAt: body.capturedOfflineAt });
+  }
   if (authRef) {
     await db.execute(sql`
       insert into aadhaar_verifications (beneficiary_id, method, purpose, txn_ref, result, response_code, message)
       values (${body.beneficiaryId}, 'OTP', 'DISTRIBUTION_AUTH', ${authRef}, 'SUCCESS', '000', ${'Receipt ' + result.receiptNo})`);
   }
-  res.status(result.duplicate ? 200 : 201).json(result);
+  res.status(result.duplicate ? 200 : 201).json({ ...result, syncedLate });
 });
 
 dealerRouter.get('/distributions', async (req, res) => {

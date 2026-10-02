@@ -3,8 +3,6 @@ import { createI18n } from '@srms/ui-kit';
 const en = {
   'app.name': 'Smart Ration',
   'app.tagline': 'Your ration, your right',
-  'lang.other': 'हिंदी',
-  'lang.label': 'भाषा बदलें / Change language',
 
   'common.loading': 'Loading…',
   'common.retry': 'Try again',
@@ -225,8 +223,6 @@ type Key = keyof typeof en;
 const hi: Record<Key, string> = {
   'app.name': 'स्मार्ट राशन',
   'app.tagline': 'आपका राशन, आपका अधिकार',
-  'lang.other': 'English',
-  'lang.label': 'भाषा बदलें / Change language',
 
   'common.loading': 'लोड हो रहा है…',
   'common.retry': 'फिर से कोशिश करें',

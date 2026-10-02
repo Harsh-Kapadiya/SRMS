@@ -24,9 +24,10 @@ export function describe(a: AuditRow): string {
     case 'GENERATE_QUOTAS': return 'generated monthly quotas';
     case 'RETRY_SMS': return 'requeued failed SMS';
     case 'EXPORT_REPORT': return 'exported a monthly report';
+    case 'LATE_OFFLINE_SYNC': return 'synced an offline receipt late (flagged for review)';
     default: return `${a.action.toLowerCase().replace(/_/g, ' ')} ${noun}`;
   }
 }
 
-export const ACTIONS = ['INSERT', 'UPDATE', 'DELETE', 'LOGIN', 'LOGIN_FAILED', 'PASSWORD_CHANGED', 'PASSWORD_RESET', 'VOID', 'GENERATE_QUOTAS', 'RETRY_SMS', 'EXPORT_REPORT'];
+export const ACTIONS = ['INSERT', 'UPDATE', 'DELETE', 'LOGIN', 'LOGIN_FAILED', 'PASSWORD_CHANGED', 'PASSWORD_RESET', 'VOID', 'GENERATE_QUOTAS', 'RETRY_SMS', 'EXPORT_REPORT', 'LATE_OFFLINE_SYNC'];
 export const ENTITIES = Object.keys(ENTITY);

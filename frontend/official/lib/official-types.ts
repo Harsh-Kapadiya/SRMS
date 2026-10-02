@@ -103,6 +103,8 @@ export interface DistributionRow {
   status: 'COMPLETED' | 'VOIDED';
   authMethod: string;
   offline: boolean;
+  /** Offline receipt synced after the admin's offline_max_hours setting — needs review. */
+  syncedLate: boolean;
   beneficiaryName: string;
   rationCardNo: string | null;
   shopCode: string;

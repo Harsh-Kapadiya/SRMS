@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Languages } from 'lucide-react';
+import { LangToggle as SharedLangToggle } from '@srms/ui-kit';
 import { useI18n } from '@/lib/beneficiary-i18n';
 
 export function Logo({ compact = false }: { compact?: boolean }) {
@@ -20,17 +20,6 @@ export function Logo({ compact = false }: { compact?: boolean }) {
 }
 
 export function LangToggle() {
-  const { lang, setLang, t } = useI18n();
-  return (
-    <button
-      type="button"
-      onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
-      title={t('lang.label')}
-      aria-label={t('lang.label')}
-      className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold text-ink-2 hover:bg-surface-3"
-    >
-      <Languages className="size-4" aria-hidden />
-      {t('lang.other')}
-    </button>
-  );
+  const { lang, setLang } = useI18n();
+  return <SharedLangToggle lang={lang} setLang={setLang} />;
 }

@@ -9,6 +9,10 @@
       "dependsOn": [
         "^build"
       ],
+      "env": [
+        "API_URL",
+        "NEXT_PUBLIC_DEMO_MODE"
+      ],
       "outputs": [
         "dist/**",
         ".next/**",

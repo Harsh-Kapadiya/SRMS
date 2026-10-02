@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@srms/shared": "workspace:*"
+    "@srms/shared": "workspace:*",
+    "lucide-react": "^1.49.0"
   },
   "peerDependencies": {
     "react": "^19.0.0",

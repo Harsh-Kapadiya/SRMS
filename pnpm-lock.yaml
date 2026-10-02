@@ -202,6 +202,49 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
 
+  frontend/dealer:
+    dependencies:
+      '@srms/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      '@srms/ui-kit':
+        specifier: workspace:*
+        version: link:../ui-kit
+      lucide-react:
+        specifier: ^1.49.0
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
+      next:
+        specifier: ^16.3.7
+        version: 16.3.7(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: ^19.3.0
+        version: 19.3.0
+      react-dom:
+        specifier: ^19.3.0
+        version: 19.3.0(react@19.3.0)
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.3.3
+        version: 4.3.3
+      '@types/node':
+        specifier: ^22.20.4
+        version: 22.20.4
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+
   frontend/official:
     dependencies:
       '@srms/shared':
@@ -250,6 +293,9 @@ importers:
       '@srms/shared':
         specifier: workspace:*
         version: link:../../shared
+      lucide-react:
+        specifier: ^1.49.0
+        version: 1.49.0(@types/react@19.3.0)(react@19.3.0)
     devDependencies:
       '@types/react':
         specifier: ^19.3.0

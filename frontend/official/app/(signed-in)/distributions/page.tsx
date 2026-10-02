@@ -46,7 +46,7 @@ function Distributions() {
                     <td>{d.beneficiaryName}<span className="block font-mono text-xs text-ink-3">{d.rationCardNo}</span></td>
                     <td>{d.shopName}<span className="block text-xs text-ink-3">{d.shopCode}</span></td>
                     <td className="whitespace-nowrap">{d.items.map((i) => `${i.name} ${i.quantity}`).join(' · ')}</td>
-                    <td>{d.offline ? <Badge tone="warn">Offline</Badge> : AUTH[d.authMethod] ?? d.authMethod}</td>
+                    <td>{d.syncedLate ? <Badge tone="bad">Offline · synced late</Badge> : d.offline ? <Badge tone="warn">Offline</Badge> : AUTH[d.authMethod] ?? d.authMethod}</td>
                     <td>{d.status === 'VOIDED' ? <Badge tone="bad">Voided</Badge> : <Badge tone="ok">Completed</Badge>}</td>
                   </tr>
                 ))}

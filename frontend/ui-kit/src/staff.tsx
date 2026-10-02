@@ -12,6 +12,28 @@ import { Alert, Button, Card, Field, Input, Loading, cx } from './components';
 
 type Api = ReturnType<typeof createApi>;
 
+/** English defaults; the dealer app passes Hindi through the `text` prop (NFR-1). */
+export const STAFF_TEXT = {
+  brand: 'Smart Ration Distribution System',
+  footer: 'Public Distribution System · Bihar',
+  signIn: 'Sign in',
+  signInHint: 'Use your official email and password.',
+  email: 'Email',
+  password: 'Password',
+  demoAccounts: 'Demo accounts',
+  changePassword: 'Change password',
+  currentPassword: 'Current password',
+  newPassword: 'New password',
+  newPasswordHint: 'At least 10 characters, with upper- and lower-case letters and a digit.',
+  repeatPassword: 'Repeat new password',
+  passwordsDiffer: 'The new passwords do not match.',
+  passwordChanged: 'Password changed',
+  passwordChangedHint: 'Any other device signed in to this account has been logged out.',
+  done: 'Done',
+};
+export type StaffText = typeof STAFF_TEXT;
+const errMessage = (err: unknown) => (err as Error).message;
+
 export interface StaffUser {
   id: string;
   role: string;
@@ -23,7 +45,17 @@ export interface StaffUser {
 
 // ─── login ───────────────────────────────────────────────────────────────────
 
-export function StaffLogin({ api, title, subtitle, demo }: { api: Api; title: string; subtitle: string; demo?: { label: string; email: string; password: string }[] }) {
+export function StaffLogin({ api, title, subtitle, demo, text: override, errorText = errMessage, corner }: {
+  api: Api;
+  title: string;
+  subtitle: string;
+  demo?: { label: string; email: string; password: string }[];
+  text?: Partial<StaffText>;
+  errorText?: (err: unknown) => string;
+  /** Top-right slot, e.g. a language button. */
+  corner?: ReactNode;
+}) {
+  const text = { ...STAFF_TEXT, ...override };
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string>();
@@ -37,46 +69,47 @@ export function StaffLogin({ api, title, subtitle, demo }: { api: Api; title: st
       await api.post('/auth/login', { email, password });
       location.replace('/'); // full load: drop anything prefetched while logged out
     } catch (err) {
-      setError((err as Error).message);
+      setError(errorText(err));
       setBusy(false);
     }
   }
 
   return (
-    <main className="grid min-h-dvh lg:grid-cols-[1fr_minmax(420px,520px)]">
+    <main className="relative grid min-h-dvh lg:grid-cols-[1fr_minmax(420px,520px)]">
+      {corner && <div className="absolute right-4 top-4 z-10">{corner}</div>}
       <section className="relative hidden overflow-hidden bg-gradient-to-br from-brand-strong to-brand p-12 text-on-brand lg:flex lg:flex-col lg:justify-between">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icon.svg" alt="" width={44} height={44} className="rounded-xl bg-white/10" />
-          <span className="text-lg font-bold">Smart Ration Distribution System</span>
+          <span className="text-lg font-bold">{text.brand}</span>
         </div>
         <div>
           <h1 className="max-w-md text-4xl font-bold leading-tight">{title}</h1>
           <p className="mt-3 max-w-md text-lg opacity-85">{subtitle}</p>
         </div>
-        <p className="text-sm opacity-70">Public Distribution System · Bihar</p>
+        <p className="text-sm opacity-70">{text.footer}</p>
         <div className="pointer-events-none absolute -bottom-24 -right-24 size-96 rounded-full bg-white/10" aria-hidden />
       </section>
       <section className="flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-sm">
           <h2 className="text-2xl font-bold lg:hidden">{title}</h2>
-          <h2 className="hidden text-2xl font-bold lg:block">Sign in</h2>
-          <p className="mt-1 text-ink-3">Use your official email and password.</p>
+          <h2 className="hidden text-2xl font-bold lg:block">{text.signIn}</h2>
+          <p className="mt-1 text-ink-3">{text.signInHint}</p>
           <Card className="mt-6">
             <form onSubmit={submit} className="space-y-4" noValidate>
-              <Field label="Email">
+              <Field label={text.email}>
                 {(id) => <Input id={id} type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />}
               </Field>
-              <Field label="Password">
+              <Field label={text.password}>
                 {(id) => <Input id={id} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}
               </Field>
               {error && <Alert tone="bad" title={error} />}
-              <Button type="submit" size="lg" block loading={busy}>Sign in</Button>
+              <Button type="submit" size="lg" block loading={busy}>{text.signIn}</Button>
             </form>
           </Card>
           {demo && demo.length > 0 && (
             <div className="mt-5 rounded-xl border border-dashed border-line p-4 text-sm">
-              <p className="font-semibold text-ink-2">Demo accounts</p>
+              <p className="font-semibold text-ink-2">{text.demoAccounts}</p>
               <ul className="mt-2 space-y-1.5">
                 {demo.map((d) => (
                   <li key={d.email}>
@@ -188,7 +221,14 @@ export function StaffShell({ api, appName, nav, subtitle, children }: {
 }
 
 /** Staff replace the temporary password the admin handed them; other sessions are logged out by the API. */
-function ChangePassword({ api, open, onClose }: { api: Api; open: boolean; onClose: () => void }) {
+export function ChangePassword({ api, open, onClose, text: override, errorText = errMessage }: {
+  api: Api;
+  open: boolean;
+  onClose: () => void;
+  text?: Partial<StaffText>;
+  errorText?: (err: unknown) => string;
+}) {
+  const text = { ...STAFF_TEXT, ...override };
   const [form, setForm] = useState({ current: '', next: '', confirm: '' });
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -201,38 +241,38 @@ function ChangePassword({ api, open, onClose }: { api: Api; open: boolean; onClo
   };
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (form.next !== form.confirm) return setError('The new passwords do not match.');
+    if (form.next !== form.confirm) return setError(text.passwordsDiffer);
     setBusy(true);
     setError(undefined);
     try {
       await api.post('/auth/change-password', { currentPassword: form.current, newPassword: form.next });
       setDone(true);
     } catch (err) {
-      setError((err as Error).message);
+      setError(errorText(err));
     } finally {
       setBusy(false);
     }
   }
   return (
-    <Modal open={open} onClose={close} title="Change password">
+    <Modal open={open} onClose={close} title={text.changePassword}>
       {done ? (
         <div className="space-y-4">
-          <Alert tone="ok" title="Password changed">Any other device signed in to this account has been logged out.</Alert>
-          <Button block onClick={close}>Done</Button>
+          <Alert tone="ok" title={text.passwordChanged}>{text.passwordChangedHint}</Alert>
+          <Button block onClick={close}>{text.done}</Button>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-4" noValidate>
-          <Field label="Current password">
+          <Field label={text.currentPassword}>
             {(id) => <Input id={id} type="password" autoComplete="current-password" value={form.current} onChange={(e) => setForm({ ...form, current: e.target.value })} />}
           </Field>
-          <Field label="New password" hint="At least 10 characters, with upper- and lower-case letters and a digit.">
+          <Field label={text.newPassword} hint={text.newPasswordHint}>
             {(id) => <Input id={id} type="password" autoComplete="new-password" value={form.next} onChange={(e) => setForm({ ...form, next: e.target.value })} />}
           </Field>
-          <Field label="Repeat new password">
+          <Field label={text.repeatPassword}>
             {(id) => <Input id={id} type="password" autoComplete="new-password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} />}
           </Field>
           {error && <Alert tone="bad" title={error} />}
-          <Button type="submit" block loading={busy}>Change password</Button>
+          <Button type="submit" block loading={busy}>{text.changePassword}</Button>
         </form>
       )}
     </Modal>
