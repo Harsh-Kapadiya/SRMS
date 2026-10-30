@@ -1,0 +1,31 @@
+{
+  "name": "srms",
+  "private": true,
+  "description": "Smart Ration Distribution Monitoring System (SRMS) — monorepo",
+  "license": "MIT",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20.18.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test --concurrency=1",
+    "format": "prettier --write .",
+    "db:up": "docker compose up -d postgres",
+    "db:generate": "pnpm --filter @srms/database generate",
+    "db:migrate": "pnpm --filter @srms/database migrate",
+    "db:deploy": "pnpm --filter @srms/database migrate:deploy",
+    "db:bootstrap": "pnpm --filter @srms/database bootstrap",
+    "db:seed": "pnpm --filter @srms/database seed",
+    "db:reset": "pnpm --filter @srms/database reset",
+    "db:test": "pnpm --filter @srms/database test"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.11.5",
+    "typescript": "~5.9.3"
+  }
+}

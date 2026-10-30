@@ -1,0 +1,23 @@
+# Local development database. Production uses Neon (see docs/deployment.md).
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: srms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: srms
+      POSTGRES_PASSWORD: srms
+      POSTGRES_DB: srms
+      TZ: Asia/Kolkata
+    ports:
+      - "5432:5432"
+    volumes:
+      - srms-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U srms -d srms"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  srms-pgdata:

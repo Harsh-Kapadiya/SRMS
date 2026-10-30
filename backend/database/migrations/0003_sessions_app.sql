@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ADD COLUMN "app" varchar(12) NOT NULL;

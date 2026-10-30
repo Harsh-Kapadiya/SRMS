@@ -1,0 +1,11 @@
+packages:
+  - "backend/*"
+  - "frontend/*"
+  - "shared"
+
+# pnpm 10 blocks dependency install scripts unless allowed explicitly.
+onlyBuiltDependencies:
+  - esbuild
+
+# Do not pull in optional peers (e.g. drizzle-orm would otherwise install Prisma).
+autoInstallPeers: false

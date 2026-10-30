@@ -1,0 +1,34 @@
+node_modules/
+dist/
+build/
+.next/
+out/
+.turbo/
+coverage/
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+
+# env files — never commit secrets
+.env
+.env.*
+!.env.example
+# dev-only, no secrets: shows the demo accounts on the login pages
+!.env.development
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# vercel / render
+.vercel
+
+# this repo uses pnpm (pnpm-lock.yaml); an npm lockfile would confuse Vercel
+package-lock.json
