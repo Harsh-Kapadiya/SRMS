@@ -1,0 +1,30 @@
+{
+  "name": "@srms/dealer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SRMS ration dealer web app: issue ration with Aadhaar OTP, stock, offline mode (EN/हिंदी)",
+  "scripts": {
+    "dev": "next dev --port 3004",
+    "build": "next build",
+    "start": "next start --port 3004",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@srms/shared": "workspace:*",
+    "@srms/ui-kit": "workspace:*",
+    "lucide-react": "^1.49.0",
+    "next": "^16.3.7",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.20.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~5.9.3"
+  }
+}
